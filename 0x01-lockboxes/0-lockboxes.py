@@ -1,3 +1,4 @@
+#!/usr/bin/python3
 def canUnlockAll(boxes):
     n = len(boxes)
     visited = [False] * n  # Keep track of visited boxes
