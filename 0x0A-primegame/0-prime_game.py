@@ -1,6 +1,11 @@
 #!/usr/bin/python3
+""" A program that does the prime game """
+
+
 def isWinner(x, nums):
+    """ The function that checks the winner """
     def sieve_of_eratosthenes(n):
+        """ The function that sieve the winners """
         primes = [True] * (n + 1)
         primes[0] = primes[1] = False
         p = 2
@@ -12,6 +17,7 @@ def isWinner(x, nums):
         return [i for i in range(n + 1) if primes[i]]
 
     def calculate_winner(n):
+        """ The function that calculates the winner """
         primes = sieve_of_eratosthenes(n)
         num_primes = len(primes)
         if num_primes % 2 == 0:
