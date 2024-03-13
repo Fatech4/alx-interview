@@ -1,6 +1,9 @@
 #!/usr/bin/python3
+""" A program to calculate island perimeter """
+
 
 def island_perimeter(grid):
+    """ Island perimeter """
     perimeter = 0
     rows = len(grid)
     cols = len(grid[0])
