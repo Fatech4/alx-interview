@@ -1,58 +1,49 @@
 #!/usr/bin/python3
-import sys
-import signal
-
-# Initialize variables to store metrics
-file_sizes = {}
-total_size = 0
-lines_processed = 0
-
-# Function to handle interrupt signal (CTRL+C)
+"""
+Task: 0. Log Parsing
+File: 0x06-log_parsing/0-stats.py
+"""
+from sys import stdin
 
 
-def signal_handler(sig, frame):
-    """ Signal function """
-    print_statistics()
-    sys.exit(0)
-
-# Function to print statistics
-
-
-def print_statistics():
-    """ Statistics function """
-    print(f"Total file size: {total_size}")
-    for status_code in sorted(file_sizes.keys()):
-        print(f"{status_code}: {file_sizes[status_code]}")
+def printstats(file_size, status_codes):
+    """
+    This prints statistics at the beginning and every 10 lines
+    This will also be called on a Keyboard interruption
+    """
+    print("File size: " + str(file_size))
+    for code in sorted(status_codes.keys()):
+        if status_codes[code] > 0:
+            print(code + ": " + str(status_codes[code]))
 
 
-# Register the signal handler for interrupt
-signal.signal(signal.SIGINT, signal_handler)
+line_num = 0
+file_size = 0
+status_code = 0
+status_codes = {"200": 0, "301": 0, "400": 0, "401": 0,
+                "403": 0, "404": 0, "405": 0, "500": 0}
 
-# Process lines from stdin
-for line in sys.stdin:
-    try:
-        # Split line by spaces
-        parts = line.split()
+try:
+    for line in stdin:
+        line_num += 1
+        split_line = line.split()
 
-        # Extract status code and file size
-        status_code = int(parts[-2])
-        size = int(parts[-1])
+        if len(split_line) > 1:
+            file_size += int(split_line[-1])
 
-        # Update total file size
-        total_size += size
+        if len(split_line) > 2 and split_line[-2].isnumeric():
+            status_code = split_line[-2]
+        else:
+            status_code = 0
 
-        # Update file sizes dictionary
-        file_sizes[status_code] = file_sizes.get(status_code, 0) + 1
+        if status_code in status_codes.keys():
+            status_codes[status_code] += 1
 
-        # Increment lines processed
-        lines_processed += 1
+        if line_num % 10 == 0:
+            printstats(file_size, status_codes)
 
-        # Print statistics every 10 lines
-        if lines_processed % 10 == 0:
-            print_statistics()
-    except Exception as e:
-        # Skip invalid lines
-        continue
+    printstats(file_size, status_codes)
 
-# Print final statistics
-print_statistics()
+except (KeyboardInterrupt):
+    printstats(file_size, status_codes)
+    raise
